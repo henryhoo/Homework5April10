@@ -13,6 +13,7 @@ const std::size_t bufsize = 8192;
 
 int main(int argc, char *argv[]){
 	int pid = atoi(argv[1]);
+	int c1=0,c2=0;
 	double t = atof(argv[2]);
 	double child1,child2,parent,now;
 	mqd_t mq1,mq2,mqp,mqself;
@@ -54,6 +55,9 @@ int main(int argc, char *argv[]){
 				if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 					perror("mq_send()");
 				}
+				if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
+					perror("mq_send()");
+				}
 
 				while(true){
 					if (mq_receive(mq1, buffer, bufsize, NULL) == -1) {
@@ -65,6 +69,7 @@ int main(int argc, char *argv[]){
 					} else {
 						//						cout << "Received message 1: `" << buffer << "'.\n";
 						child1 = atof(buffer);
+						c1++;
 
 					}
 
@@ -77,6 +82,22 @@ int main(int argc, char *argv[]){
 					} else {
 						//				cout << "Received message 2: `" << buffer << "'.\n";
 						child2 = atof(buffer);
+						c2++;
+						while(c1<c2){
+
+							if (mq_receive(mq1, buffer, bufsize, NULL) == -1) {
+								if (errno == EAGAIN) {
+									//							cout << "No message 1\n";
+								} else {
+									perror("mq_receive()");
+								}
+							} else {
+								//						cout << "Received message 1: `" << buffer << "'.\n";
+								child1 = atof(buffer);
+								c1++;
+
+							}
+						}
 						if(fabs(now-(now+child1+child2)/3)<0.01){
 							cout<<"process "<<pid<<": final temperature"<<now<<endl;
 							exit(0);
@@ -85,6 +106,10 @@ int main(int argc, char *argv[]){
 							now=(now+child1+child2)/3;
 							sprintf(buffer,"%f",now);
 							cout<<"process "<<pid<<": current temperature"<<now<<endl;
+							if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
+								perror("mq_send()");
+							}
+
 							if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 								perror("mq_send()");
 							}
@@ -122,7 +147,7 @@ int main(int argc, char *argv[]){
 					} else {
 						//cout << "Received message 1: `" << buffer << "'.\n";
 						child1 = atof(buffer);
-
+c1++;
 					}
 
 					if (mq_receive(mq2, buffer, bufsize, NULL) == -1) {
@@ -134,6 +159,23 @@ int main(int argc, char *argv[]){
 					} else {
 						//cout << "Received message 2: `" << buffer << "'.\n";
 						child2 = atof(buffer);
+c2++;
+while(c1<c2){
+
+					if (mq_receive(mq1, buffer, bufsize, NULL) == -1) {
+						if (errno == EAGAIN) {
+							//							cout << "No message 1\n";
+						} else {
+							perror("mq_receive()");
+						}
+					} else {
+						//						cout << "Received message 1: `" << buffer << "'.\n";
+						child1 = atof(buffer);
+						c1++;
+
+					}
+}
+						if(child1==child1) sleep(0.5);
 						now=(now+child1+child2)/3;
 						sprintf(buffer,"%f",now);
 						cout<<"process "<<pid<<": current temperature"<<now<<endl;
@@ -156,6 +198,10 @@ int main(int argc, char *argv[]){
 						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 							perror("mq_send()");
 						}
+						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
+							perror("mq_send()");
+						}
+						sleep(0.5);
 					}
 				}
 				break;
@@ -189,7 +235,7 @@ int main(int argc, char *argv[]){
 					} else {
 						//cout << "Received message 1: `" << buffer << "'.\n";
 						child1 = atof(buffer);
-
+c1++;
 					}
 
 					if (mq_receive(mq2, buffer, bufsize, NULL) == -1) {
@@ -201,6 +247,23 @@ int main(int argc, char *argv[]){
 					} else {
 						//cout << "Received message 2: `" << buffer << "'.\n";
 						child2 = atof(buffer);
+						c2++;
+while(c1<c2){
+
+					if (mq_receive(mq1, buffer, bufsize, NULL) == -1) {
+						if (errno == EAGAIN) {
+							//							cout << "No message 1\n";
+						} else {
+							perror("mq_receive()");
+						}
+					} else {
+						//						cout << "Received message 1: `" << buffer << "'.\n";
+						child1 = atof(buffer);
+						c1++;
+
+					}
+}
+						if(child1==child1) sleep(0.5);
 						now=(now+child1+child2)/3;
 						sprintf(buffer,"%f",now);
 						cout<<"process "<<pid<<": current temperature"<<now<<endl;
@@ -223,6 +286,10 @@ int main(int argc, char *argv[]){
 						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 							perror("mq_send()");
 						}
+						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
+							perror("mq_send()");
+						}
+						sleep(0.5);
 					}
 				}
 				break;
@@ -254,6 +321,7 @@ int main(int argc, char *argv[]){
 						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 							perror("mq_send()");
 						}
+						sleep(0.5);
 					}
 				}
 				break;
@@ -285,6 +353,7 @@ int main(int argc, char *argv[]){
 						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 							perror("mq_send()");
 						}
+						sleep(0.5);
 					}
 				}
 				break;
@@ -316,6 +385,7 @@ int main(int argc, char *argv[]){
 						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 							perror("mq_send()");
 						}
+						sleep(0.5);
 					}
 				}
 				break;
@@ -347,6 +417,7 @@ int main(int argc, char *argv[]){
 						if (mq_send(mqself, buffer, strlen(buffer), 0) == -1) {
 							perror("mq_send()");
 						}
+						sleep(0.5);
 					}
 					//					cout<<"in";
 				}
