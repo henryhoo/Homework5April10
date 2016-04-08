@@ -1,17 +1,5 @@
 #!/bin/bash
 
-clear
-clear
-
-export NULL=/dev/null
-
-pushd external >& $NULL
-	make distclean
-	qmake
-	make
-popd >& $NULL
-
-pushd external >& $NULL
 	gnome-terminal -x bash -c "./external 6 600; echo done; read -p \"\""
 	sleep 1s
 	gnome-terminal -x bash -c "./external 5 500; echo done; read -p \"\""
