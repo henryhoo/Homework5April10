@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
 	}
 	int status = 0;
 	char buffer[bufsize];
-
+	
 	status = fork();
 
 	if (status == -1)
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
 		//error
 		cout<<"fail to create subprocess"<<endl;
 	}
-
+	
 	else if (status == 0)
 	{
 		//sub process
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
@@ -79,19 +79,27 @@ int main(int argc, char *argv[]){
 						if(where==2){
 							child2=atof(buffer);
 							if(fabs(now-(child1+child2+now)/3)<0.01){
-							cout<<"process "<<pid<<": final temperature"<<now<<endl;
-							exit(0);
-}else{
-							now=(child1+child2+now)/3;	
-							sprintf(buffer,"%d%f",0,now);
-							cout<<"process "<<pid<<": current temperature"<<now<<endl;
-							if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
-								perror("mq_send()");
-							}
-							if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
-								perror("mq_send()");
-							}
-						}}											
+								cout<<"process "<<pid<<": final temperature"<<now<<endl;
+
+								sprintf(buffer,"%d%f",3,now);
+								if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
+									perror("mq_send()");
+								}
+								if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
+									perror("mq_send()");
+								}
+								exit(0);
+							}else{
+								now=(child1+child2+now)/3;	
+								sprintf(buffer,"%d%f",0,now);
+								cout<<"process "<<pid<<": current temperature"<<now<<endl;
+								if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
+									perror("mq_send()");
+								}
+								if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
+									perror("mq_send()");
+								}
+							}}											
 					}
 				}
 				break;
@@ -118,15 +126,15 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
 					} else {
 						where=(int)buffer[0]-48;
-						cout<<where<<endl;
+//						cout<<where<<endl;
 						strncpy(buffer, buffer+1, bufsize-1);
-						cout<<atof(buffer)<<endl;
+//						cout<<atof(buffer)<<endl;
 						if(where==0){
 							parent=atof(buffer);
 							now=(parent+now)/2;
@@ -150,11 +158,22 @@ int main(int argc, char *argv[]){
 								perror("mq_send()");
 							}
 
+						}
+						if(where==3){
+							cout<<"process "<<pid<<": final temperature"<<now<<endl;
+							sprintf(buffer,"%d%f",3,now);
+							if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
+								perror("mq_send()");
+							}
+							if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
+								perror("mq_send()");
+							}
+							exit(0);
 						}											
 					}
 
-
 				}
+
 				break;
 			case 2:	
 				mqp = mq_open("/70",O_WRONLY | O_CREAT | O_NONBLOCK,0666,NULL);
@@ -179,7 +198,7 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
@@ -210,6 +229,17 @@ int main(int argc, char *argv[]){
 							}
 
 						}											
+						if(where==3){
+							cout<<"process "<<pid<<": final temperature"<<now<<endl;
+							sprintf(buffer,"%d%f",3,now);
+							if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
+								perror("mq_send()");
+							}
+							if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
+								perror("mq_send()");
+							}
+							exit(0);
+						}											
 					}
 
 				}
@@ -229,7 +259,7 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
@@ -245,6 +275,10 @@ int main(int argc, char *argv[]){
 								perror("mq_send()");
 							}
 						}
+						if(where==3){
+							cout<<"process "<<pid<<": final temperature"<<now<<endl;
+							exit(0);
+						}											
 
 					}											
 				}
@@ -265,7 +299,7 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
@@ -281,10 +315,14 @@ int main(int argc, char *argv[]){
 								perror("mq_send()");
 							}
 						}
+						if(where==3){
+							cout<<"process "<<pid<<": final temperature"<<now<<endl;
+							exit(0);
+						}											
 
 					}											
-				
-}
+
+				}
 				break;
 			case 5:	
 				mqp = mq_open("/72",O_WRONLY | O_CREAT | O_NONBLOCK,0666,NULL);
@@ -301,7 +339,7 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
@@ -317,6 +355,10 @@ int main(int argc, char *argv[]){
 								perror("mq_send()");
 							}
 						}
+						if(where==3){
+							cout<<"process "<<pid<<": final temperature"<<now<<endl;
+							exit(0);
+						}											
 
 					}											
 				}
@@ -336,7 +378,7 @@ int main(int argc, char *argv[]){
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
-//							std::cout << "No message\n";
+							//							std::cout << "No message\n";
 						} else {
 							perror("mq_receive()");
 						}
@@ -352,6 +394,10 @@ int main(int argc, char *argv[]){
 								perror("mq_send()");
 							}
 						}
+						if(where==3){
+							cout<<"process "<<pid<<": final temperature"<<now<<endl;
+							exit(0);
+						}											
 
 					}											
 				}

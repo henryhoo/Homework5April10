@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+	gnome-terminal -x bash -c "./a.out; echo clean message queeue; read -p \"\""
+	sleep 1s
 	gnome-terminal -x bash -c "./external 6 600; echo done; read -p \"\""
 	sleep 1s
 	gnome-terminal -x bash -c "./external 5 500; echo done; read -p \"\""
