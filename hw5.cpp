@@ -13,12 +13,13 @@ const std::size_t bufsize = 8192;
 
 int main(int argc, char *argv[]){
 	int pid = atoi(argv[1]);
-	int where;
+	int where,flag=0;
 	double t = atof(argv[2]);
 	double child1,child2,parent,now;
 	mqd_t mq1,mq2,mqp,mqself;
 	if(argc!=3||pid<0||pid>6){
 		cout<<"input error"<<endl;	
+
 		return -1;
 	}
 	int status = 0;
@@ -57,9 +58,11 @@ int main(int argc, char *argv[]){
 				if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
 					perror("mq_send()");
 				}
+	cout<<"give 1 "<<buffer<<endl;
 				if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
 					perror("mq_send()");
 				}
+	cout<<"give 1 "<<buffer<<endl;
 				while(true){
 					if (mq_receive(mqself, buffer, bufsize, NULL) == -1) {
 						if (errno == EAGAIN) {
@@ -75,9 +78,11 @@ int main(int argc, char *argv[]){
 						}
 						if(where==1){
 							child1=atof(buffer);
+							flag=1;
 						}
 						if(where==2){
 							child2=atof(buffer);
+
 							if(fabs(now-(child1+child2+now)/3)<0.01){
 								cout<<"process "<<pid<<": final temperature"<<now<<endl;
 
@@ -85,6 +90,7 @@ int main(int argc, char *argv[]){
 								if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
 									perror("mq_send()");
 								}
+			sleep(1);
 								if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
 									perror("mq_send()");
 								}
@@ -96,9 +102,12 @@ int main(int argc, char *argv[]){
 								if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
 									perror("mq_send()");
 								}
+	cout<<"give 1 "<<buffer<<endl;
+sleep(1);
 								if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
 									perror("mq_send()");
 								}
+	cout<<"give 2 "<<buffer<<endl;
 							}}											
 					}
 				}
@@ -131,7 +140,7 @@ int main(int argc, char *argv[]){
 							perror("mq_receive()");
 						}
 					} else {
-						where=(int)buffer[0]-48;
+						where=buffer[0]-48;
 //						cout<<where<<endl;
 						strncpy(buffer, buffer+1, bufsize-1);
 //						cout<<atof(buffer)<<endl;
@@ -139,13 +148,17 @@ int main(int argc, char *argv[]){
 							parent=atof(buffer);
 							now=(parent+now)/2;
 							sprintf(buffer,"%d%f",0,now);
-							cout<<"process "<<pid<<": current temperature"<<now<<endl;
+						//	cout<<"process "<<pid<<": current temperature"<<now<<endl;
 							if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
 								perror("mq_send()");
 							}
+sleep(1);
+							cout<<"give 3 "<<buffer<<endl;
 							if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
 								perror("mq_send()");
-							}}
+}
+							cout<<"give 4 "<<buffer<<endl;
+}
 						if(where==1){
 							child1=atof(buffer);
 						}
@@ -209,13 +222,17 @@ int main(int argc, char *argv[]){
 							parent=atof(buffer);
 							now=(parent+now)/2;
 							sprintf(buffer,"%d%f",0,now);
-							cout<<"process "<<pid<<": current temperature"<<now<<endl;
+						//	cout<<"process "<<pid<<": current temperature"<<now<<endl;
 							if (mq_send(mq1, buffer, strlen(buffer), 0) == -1) {
 								perror("mq_send()");
 							}
+	cout<<"give 6 "<<buffer<<endl;
+sleep(1);
 							if (mq_send(mq2, buffer, strlen(buffer), 0) == -1) {
 								perror("mq_send()");
-							}}
+							}
+	cout<<"give 6 "<<buffer<<endl;
+}
 						if(where==1){
 							child1=atof(buffer);
 						}
